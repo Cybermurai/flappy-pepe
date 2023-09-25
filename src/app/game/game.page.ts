@@ -1,12 +1,14 @@
-import { Component } from '@angular/core';
+import { Component, OnInit } from '@angular/core';
 import 'phaser';
 
+
 @Component({
-  selector: 'app-tab1',
-  templateUrl: 'tab1.page.html',
-  styleUrls: ['tab1.page.scss']
+  selector: 'app-game',
+  templateUrl: './game.page.html',
+  styleUrls: ['./game.page.scss'],
 })
-export class Tab1Page{
+
+export class GamePage implements OnInit {
   config = {
     type: Phaser.AUTO,
     width: 800,
@@ -43,5 +45,9 @@ export class Tab1Page{
 
   update(){
     console.log('UPDATE OK');
+    let frames = 1+1;
+  }
+
+  ngOnInit() {
   }
 }
