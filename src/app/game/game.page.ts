@@ -27,7 +27,7 @@ export class GamePage implements OnInit {
     physics: {
       default: 'arcade',
       arcade: {
-        debug: false,
+        debug: true,
       }
     },
     scene: {
@@ -45,6 +45,7 @@ export class GamePage implements OnInit {
   pepe:any;
   pipe:any;
   pipe2:any;
+
   constructor() {
     game = new Phaser.Game(this.config);
   }
@@ -57,14 +58,14 @@ export class GamePage implements OnInit {
 
   create () {
     this.add.image(0, 0, 'sky').setOrigin(0);
-    
+
     this.pepe = this.physics.add.sprite(_initialPepePosition.x, _initialPepePosition.y, 'pepe').setOrigin(0);
     this.pepe.body.gravity.y = 400;
     this.pepe.displayWidth = 42;
     this.pepe.displayHeight = 42;
     this.pepe.body.velocity.y = VELOCITY;
     this.input.on('pointerdownoutside', () =>{
-      this.pepe.body.velocity.y =- FLAP_VELOCITY;
+      flap(this.pepe.body.velocity.y);
     });
 
     this.pipe = this.physics.add.sprite(300, 400, 'pipe').setOrigin(0, 0.2);
@@ -76,12 +77,10 @@ export class GamePage implements OnInit {
   update(){
     if(this.pepe.body.position.y >= game.config.height-this.pepe.displayHeight){
       this.pepe.body.velocity.y = -VELOCITY;
-      this.pepe.x = _initialPepePosition.x;
-      this.pepe.y = _initialPepePosition.y;
+      gameOver(this.pepe);
     }else if(this.pepe.body.position.y <= 0){
       this.pepe.body.velocity.y = VELOCITY;
-      this.pepe.x = _initialPepePosition.x;
-      this.pepe.y = _initialPepePosition.y;
+      gameOver(this.pepe);
     }
 
     if(this.pipe.body.position.x <= 0){
@@ -90,4 +89,14 @@ export class GamePage implements OnInit {
     }
   }
   ngOnInit() {}
+}
+
+function gameOver(player:any):void {
+  player.x = _initialPepePosition.x;
+  player.y = _initialPepePosition.y;
+  game.pause();
+}
+
+function flap(playerVelocityY:number):void{
+  playerVelocityY =- FLAP_VELOCITY;
 }
