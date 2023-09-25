@@ -1,0 +1,8 @@
+{
+  "name": "Flappy Pepe",
+  "integrations": {
+    "capacitor": {}
+  },
+  "type": "angular",
+  "id": "09746f55"
+}
