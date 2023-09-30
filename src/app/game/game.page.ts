@@ -12,6 +12,7 @@ const _initialPepePosition = {
   x: deviceParameters.width * 0.1,
   y: deviceParameters.height / 2,
 }
+const pipeVerticalDistanceRange = [150, 250];
 
 @Component({
   selector: 'app-game',
@@ -26,6 +27,7 @@ export class GamePage implements OnInit {
     height: deviceParameters.height,
     physics: {
       default: 'arcade',
+      gravity: 0,
       arcade: {
         debug: true,
       }
@@ -43,8 +45,10 @@ export class GamePage implements OnInit {
   input:any;
 
   pepe:any;
-  pipe:any;
-  pipe2:any;
+
+  pipeVerticalDistance:number | undefined;
+  upperPipe: any;
+  lowerPipe:any;
 
   constructor() {
     game = new Phaser.Game(this.config);
@@ -64,14 +68,13 @@ export class GamePage implements OnInit {
     this.pepe.displayWidth = 42;
     this.pepe.displayHeight = 42;
     this.pepe.body.velocity.y = VELOCITY;
-    this.input.on('pointerdownoutside', () =>{
-      flap(this.pepe.body.velocity.y);
+    this.input.on('pointerdownoutside', () => {
+      flap(this.pepe.body.velocity);
     });
 
-    this.pipe = this.physics.add.sprite(300, 400, 'pipe').setOrigin(0, 0.2);
-    this.pipe2 = this.physics.add.sprite(300, 400, 'pipe').setOrigin(0, 1.4);
-    this.pipe.body.gravity.x = -20;
-    this.pipe2.body.gravity.x = -20;
+    this.pipeVerticalDistance = Phaser.Math.Between(pipeVerticalDistanceRange[0], pipeVerticalDistanceRange[1]);
+    this.upperPipe = this.physics.add.sprite(400, 100, 'pipe').setOrigin(0, 1);
+    this.lowerPipe = this.physics.add.sprite(400, this.upperPipe.y + this.pipeVerticalDistance, 'pipe').setOrigin(0, 0);
   }
 
   update(){
@@ -81,11 +84,6 @@ export class GamePage implements OnInit {
     }else if(this.pepe.body.position.y <= 0){
       this.pepe.body.velocity.y = VELOCITY;
       gameOver(this.pepe);
-    }
-
-    if(this.pipe.body.position.x <= 0){
-      this.pipe.body.position.x = 600;
-      this.pipe2.body.position.x = 600;
     }
   }
   ngOnInit() {}
@@ -97,6 +95,6 @@ function gameOver(player:any):void {
   game.pause();
 }
 
-function flap(playerVelocityY:number):void{
-  playerVelocityY =- FLAP_VELOCITY;
+function flap(playerVelocity:any):void{
+  playerVelocity.y =- FLAP_VELOCITY;
 }
