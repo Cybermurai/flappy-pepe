@@ -3,18 +3,18 @@ import 'phaser';
 
 let game:any;
 const deviceParameters = {
-  width: 1200,
+  width: 800,
   height: 600
 }
-const VELOCITY:number = 300;
+const VELOCITY:number = 200;
 
-const FLAP_VELOCITY:number = 199;
+const FLAP_VELOCITY:number = 220;
 const PIPES_TO_RENDER = 128;
 const _initialPepePosition = {
   x: deviceParameters.width * 0.1,
   y: deviceParameters.height / 2,
 }
-const pipeVerticalDistanceRange = [100, 250];
+const pipeVerticalDistanceRange = [100, 200];
 let pipeHorizontalDistance: number = 0;
 
 
@@ -39,6 +39,11 @@ export class GamePage implements OnInit {
       preload: this.preload,
       create: this.create,
       update: this.update,
+    },
+    scale: {
+      mode: Phaser.Scale.FIT,
+      width: deviceParameters.width,
+      height: deviceParameters.height
     }
   };
 
@@ -53,6 +58,8 @@ export class GamePage implements OnInit {
   pipeVerticalPosition:number | undefined;
   upperPipe: any;
   lowerPipe:any;
+
+  pipes:any = null;
 
   constructor() {
     game = new Phaser.Game(this.config);
@@ -78,11 +85,13 @@ export class GamePage implements OnInit {
       flap(this.pepe.body.velocity);
     });
 
+    this.pipes = this.physics.add.group();
     for (let i = 0; i < PIPES_TO_RENDER; i++) {
-      const upperPipe = this.physics.add.sprite(0, 0, 'pipe').setOrigin(0, 1);
-      const lowerPipe = this.physics.add.sprite(0, 0,  'pipe').setOrigin(0, 0);
+      const upperPipe = this.pipes.create(0, 0, 'pipe').setOrigin(0, 1);
+      const lowerPipe = this.pipes.create(0, 0,  'pipe').setOrigin(0, 0);
       placePipe(upperPipe, lowerPipe);
     }
+    this.pipes.setVelocityX(-200);
   }
 
   update(timer){
@@ -131,9 +140,6 @@ function placePipe(uPipe:any, lPipe:any){
 
   lPipe.x = uPipe.x;
   lPipe.y = uPipe.y + pipeVerticalDistance;
-
-  uPipe.body.velocity.x = -300;
-  lPipe.body.velocity.x = -300;
 
   console.log(pipeHorizontalDistance);
 
